@@ -4,6 +4,7 @@ import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import med.gomez.api.medic.updateMedicalData;
 
 @Embeddable
 @Getter
@@ -22,5 +23,14 @@ public class Addres {
         this.city = addres.city();
         this.number = addres.number();
         this.complement = addres.complement();
+    }
+
+    public Addres updateData(AddressData addres) {
+        this.street = addres.street();
+        this.district = addres.district();
+        this.city = addres.city();
+        this.number = addres.number();
+        this.complement = addres.complement();
+        return this;
     }
 }

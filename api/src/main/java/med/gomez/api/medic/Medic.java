@@ -23,12 +23,14 @@ public class Medic {
     private  String email;
     private String document;
     private String phone;
+    private Boolean active;
     @Enumerated(EnumType.STRING)
     private Specialty specialty;
     @Embedded
     private Addres addres;
 
     public Medic(MedicalRegistrationData medicalRegistrationData) {
+        this.active = true;
         this.name = medicalRegistrationData.name();
         this.email = medicalRegistrationData.email();
         this.document = medicalRegistrationData.document();
@@ -38,4 +40,19 @@ public class Medic {
     }
 
 
+    public void updateData(updateMedicalData updateMedicalData) {
+        if (updateMedicalData.name() != null){
+            this.name = updateMedicalData.name();
+        }
+        if (updateMedicalData.document() != null){
+            this.document = updateMedicalData.document();
+        }
+        if (updateMedicalData.addres() != null){
+            this.addres = addres.updateData(updateMedicalData.addres());
+        }
+    }
+
+    public void deactivateMedic() {
+        this.active = false;
+    }
 }
