@@ -6,7 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import med.gomez.api.addres.Addres;
-import med.gomez.api.addres.AddressData;
+
 
 
 @Table (name = "medicos")
@@ -36,4 +36,6 @@ public class Medic {
         this.specialty = medicalRegistrationData.specialty();
         this.addres = new Addres(medicalRegistrationData.addres());
     }
+
+
 }
