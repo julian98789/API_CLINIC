@@ -1,7 +1,7 @@
-package med.gomez.api.medic;
+package med.gomez.api.domain.medic;
 
 import jakarta.validation.constraints.NotNull;
-import med.gomez.api.address.AddressData;
+import med.gomez.api.domain.address.AddressData;
 
 public record UpdateMedicalData(
         @NotNull

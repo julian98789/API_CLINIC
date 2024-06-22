@@ -1,4 +1,4 @@
-package med.gomez.api.medic;
+package med.gomez.api.domain.medic;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

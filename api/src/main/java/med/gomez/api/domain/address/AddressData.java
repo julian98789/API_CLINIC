@@ -1,4 +1,4 @@
-package med.gomez.api.address;
+package med.gomez.api.domain.address;
 
 import jakarta.validation.constraints.NotBlank;
 

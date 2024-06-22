@@ -1,12 +1,11 @@
-package med.gomez.api.medic;
+package med.gomez.api.domain.medic;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import med.gomez.api.address.Address;
-
+import med.gomez.api.domain.address.Address;
 
 
 @Table (name = "medicos")

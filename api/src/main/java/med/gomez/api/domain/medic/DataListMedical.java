@@ -1,4 +1,4 @@
-package med.gomez.api.medic;
+package med.gomez.api.domain.medic;
 
 
 public record DataListMedical(

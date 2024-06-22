@@ -2,8 +2,8 @@ package med.gomez.api.controller;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import med.gomez.api.address.AddressData;
-import med.gomez.api.medic.*;
+import med.gomez.api.domain.address.AddressData;
+import med.gomez.api.domain.medic.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +24,7 @@ public class MedicController {
 
     @PostMapping
     public ResponseEntity<DataResponseMedical> registerMedic(@RequestBody @Valid MedicalRegistrationData medicalRegistrationData,
-                                        UriComponentsBuilder uriComponentsBuilder){
+                                                             UriComponentsBuilder uriComponentsBuilder){
 
         Medic medic = medicalRepository.save(new Medic(medicalRegistrationData));
         DataResponseMedical response = new DataResponseMedical(
