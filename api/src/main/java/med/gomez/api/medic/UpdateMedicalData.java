@@ -1,10 +1,9 @@
 package med.gomez.api.medic;
 
 import jakarta.validation.constraints.NotNull;
-import med.gomez.api.addres.Addres;
-import med.gomez.api.addres.AddressData;
+import med.gomez.api.address.AddressData;
 
-public record updateMedicalData(
+public record UpdateMedicalData(
         @NotNull
         Long id,
         String name,

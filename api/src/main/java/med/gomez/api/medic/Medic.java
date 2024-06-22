@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import med.gomez.api.addres.Addres;
+import med.gomez.api.address.Address;
 
 
 
@@ -18,7 +18,7 @@ import med.gomez.api.addres.Addres;
 public class Medic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long ID;
+    private Long id;
     private String name;
     private  String email;
     private String document;
@@ -27,7 +27,7 @@ public class Medic {
     @Enumerated(EnumType.STRING)
     private Specialty specialty;
     @Embedded
-    private Addres addres;
+    private Address address;
 
     public Medic(MedicalRegistrationData medicalRegistrationData) {
         this.active = true;
@@ -36,11 +36,11 @@ public class Medic {
         this.document = medicalRegistrationData.document();
         this.phone = medicalRegistrationData.phone();
         this.specialty = medicalRegistrationData.specialty();
-        this.addres = new Addres(medicalRegistrationData.addres());
+        this.address = new Address(medicalRegistrationData.addres());
     }
 
 
-    public void updateData(updateMedicalData updateMedicalData) {
+    public void updateData(UpdateMedicalData updateMedicalData) {
         if (updateMedicalData.name() != null){
             this.name = updateMedicalData.name();
         }
@@ -48,7 +48,7 @@ public class Medic {
             this.document = updateMedicalData.document();
         }
         if (updateMedicalData.addres() != null){
-            this.addres = addres.updateData(updateMedicalData.addres());
+            this.address = address.updateData(updateMedicalData.addres());
         }
     }
 

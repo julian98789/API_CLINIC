@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import med.gomez.api.addres.AddressData;
+import med.gomez.api.address.AddressData;
 
 public record MedicalRegistrationData(
 
