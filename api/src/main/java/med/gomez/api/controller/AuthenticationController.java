@@ -3,11 +3,9 @@ package med.gomez.api.controller;
 import jakarta.validation.Valid;
 import med.gomez.api.domain.users.User;
 import med.gomez.api.domain.users.userAuthenticationData;
-import med.gomez.api.infra.security.AuthenticationService;
 import med.gomez.api.infra.security.JWTTokenData;
 import med.gomez.api.infra.security.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,6 +35,7 @@ public class AuthenticationController {
         // Autentica el token utilizando el AuthenticationManager
         var authenticatedUser = authenticationManager.authenticate(authToken);
 
+        // Genera un token JWT para el usuario autenticado
         var JWTtoken= tokenService.generateToken((User) authenticatedUser.getPrincipal());
 
         // Devuelve una respuesta HTTP 200 OK si la autenticación es exitosa
