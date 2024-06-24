@@ -14,19 +14,23 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
-
-@RestController
-@RequestMapping ("/medico")
+@RestController // Indica que esta clase es un controlador REST
+@RequestMapping("/medico") // Define la ruta base para este controlador
 public class MedicController {
 
-    @Autowired
+    @Autowired // Inyecta automáticamente una instancia de MedicalRepository
     private MedicalRepository medicalRepository;
 
-    @PostMapping
-    public ResponseEntity<DataResponseMedical> registerMedic(@RequestBody @Valid MedicalRegistrationData medicalRegistrationData,
-                                                             UriComponentsBuilder uriComponentsBuilder){
+    // Endpoint para registrar un médico
+    @PostMapping // Define que este método maneja las solicitudes POST a /medico
+    public ResponseEntity<DataResponseMedical> registerMedic(
+            @RequestBody @Valid MedicalRegistrationData medicalRegistrationData,
+            UriComponentsBuilder uriComponentsBuilder) {
 
+        // Guarda el nuevo médico en la base de datos
         Medic medic = medicalRepository.save(new Medic(medicalRegistrationData));
+
+        // Construye la respuesta con los datos del médico registrado
         DataResponseMedical response = new DataResponseMedical(
                 medic.getId(),
                 medic.getName(),
@@ -40,22 +44,36 @@ public class MedicController {
                         medic.getAddress().getNumber(),
                         medic.getAddress().getComplement())
         );
-        URI url = uriComponentsBuilder.path("/medicos/{id}").buildAndExpand(medic.getId()).toUri();
+
+        // Construye la URI para la respuesta de creación
+        URI url = uriComponentsBuilder.path("/medico/{id}").buildAndExpand(medic.getId()).toUri();
+
+        // Retorna una respuesta HTTP 201 Created con la URL del recurso creado y los datos del médico
         return ResponseEntity.created(url).body(response);
     }
 
-    //retorna todos los datos de los medicos
-    @GetMapping
-    public ResponseEntity<Page<DataListMedical> >medicalList(@PageableDefault(size = 2) Pageable pagination) {
-        return ResponseEntity.ok(medicalRepository.findByActiveTrue(pagination).map(DataListMedical::new));
+    // Endpoint para obtener la lista de médicos activos paginada
+    @GetMapping // Define que este método maneja las solicitudes GET a /medico
+    public ResponseEntity<Page<DataListMedical>> medicalList(
+            @PageableDefault(size = 2) Pageable pagination) {
 
+        // Obtiene la lista de médicos activos paginada desde el repositorio
+        return ResponseEntity.ok(medicalRepository.findByActiveTrue(pagination).map(DataListMedical::new));
     }
 
-    @PutMapping
-    @Transactional // cierra la transaccion a lo mas el metodo termine
-    public ResponseEntity updateMedical(@RequestBody @Valid UpdateMedicalData updateMedicalData) {
+    // Endpoint para actualizar los datos de un médico
+    @PutMapping // Define que este método maneja las solicitudes PUT a /medico
+    @Transactional // Gestiona la transacción de manera automática por el contenedor de Spring
+    public ResponseEntity<DataResponseMedical> updateMedical(
+            @RequestBody @Valid UpdateMedicalData updateMedicalData) {
+
+        // Obtiene una referencia al médico desde el repositorio
         Medic medic = medicalRepository.getReferenceById(updateMedicalData.id());
+
+        // Actualiza los datos del médico
         medic.updateData(updateMedicalData);
+
+        // Construye la respuesta con los datos actualizados del médico
         DataResponseMedical response = new DataResponseMedical(
                 medic.getId(),
                 medic.getName(),
@@ -70,23 +88,34 @@ public class MedicController {
                         medic.getAddress().getComplement())
         );
 
+        // Retorna una respuesta HTTP 200 OK con los datos actualizados del médico
         return ResponseEntity.ok(response);
     }
 
-    // delete logico (no elimina de la base de datos)
-    @DeleteMapping("/{id}")
-    @Transactional
-    public ResponseEntity deleteMedic(@PathVariable Long id){
-        Medic medic = medicalRepository.getReferenceById(id);
-       medic.deactivateMedic();
-       return ResponseEntity.noContent().build();
+    // Endpoint para desactivar lógicamente un médico (soft delete)
+    @DeleteMapping("/{id}") // Define que este método maneja las solicitudes DELETE a /medico/{id}
+    @Transactional // Gestiona la transacción de manera automática por el contenedor de Spring
+    public ResponseEntity<Void> deleteMedic(@PathVariable Long id) {
 
+        // Obtiene una referencia al médico desde el repositorio
+        Medic medic = medicalRepository.getReferenceById(id);
+
+        // Desactiva lógicamente al médico
+        medic.deactivateMedic();
+
+        // Retorna una respuesta HTTP 204 No Content para indicar que el médico fue desactivado correctamente
+        return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<DataResponseMedical> returnsMedicalData(@PathVariable Long id){
+    // Endpoint para obtener los datos de un médico por su ID
+    @GetMapping("/{id}") // Define que este método maneja las solicitudes GET a /medico/{id}
+    public ResponseEntity<DataResponseMedical> getMedicalData(@PathVariable Long id) {
+
+        // Obtiene una referencia al médico desde el repositorio
         Medic medic = medicalRepository.getReferenceById(id);
-        var medicalData = new DataResponseMedical(
+
+        // Construye la respuesta con los datos del médico
+        DataResponseMedical response = new DataResponseMedical(
                 medic.getId(),
                 medic.getName(),
                 medic.getEmail(),
@@ -99,16 +128,8 @@ public class MedicController {
                         medic.getAddress().getNumber(),
                         medic.getAddress().getComplement())
         );
-        return ResponseEntity.ok(medicalData);
 
+        // Retorna una respuesta HTTP 200 OK con los datos del médico solicitado
+        return ResponseEntity.ok(response);
     }
-    //este codigo elimina el registro de la basa de datos
-    /*
-    public void deleteMedic(@PathVariable Long id){
-        Medic medic = medicalRepository.getReferenceById(id);
-        medicalRepository.delete(medic);
-
-    }
-
-     */
 }

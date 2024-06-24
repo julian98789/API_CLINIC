@@ -1,9 +1,13 @@
 package med.gomez.api.controller;
 
 import jakarta.validation.Valid;
+import med.gomez.api.domain.users.User;
 import med.gomez.api.domain.users.userAuthenticationData;
 import med.gomez.api.infra.security.AuthenticationService;
+import med.gomez.api.infra.security.JWTTokenData;
+import med.gomez.api.infra.security.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,19 +17,29 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/login")
+import java.security.PrivateKey;
+
+@RestController // Indica que esta clase es un controlador REST
+@RequestMapping("/login") // Define la ruta base para este controlador
 public class AuthenticationController {
 
-    @Autowired
+    @Autowired // Inyecta automáticamente una instancia de AuthenticationManager
     private AuthenticationManager authenticationManager;
 
-    @PostMapping
-    public ResponseEntity authenticateUser(@RequestBody @Valid userAuthenticationData userAuthenticationData){
-        Authentication token = new UsernamePasswordAuthenticationToken(userAuthenticationData.login()
-                ,userAuthenticationData.clue());
-        authenticationManager.authenticate(token);
+    @Autowired
+    private TokenService tokenService;
 
-        return ResponseEntity.ok().build();
+    @PostMapping // Define que este método maneja las solicitudes POST a /login
+    public ResponseEntity authenticateUser(@RequestBody @Valid userAuthenticationData userAuthenticationData) {
+        // Crea un token de autenticación con las credenciales del usuario
+        Authentication authToken = new UsernamePasswordAuthenticationToken(userAuthenticationData.login(), userAuthenticationData.clue());
+
+        // Autentica el token utilizando el AuthenticationManager
+        var authenticatedUser = authenticationManager.authenticate(authToken);
+
+        var JWTtoken= tokenService.generateToken((User) authenticatedUser.getPrincipal());
+
+        // Devuelve una respuesta HTTP 200 OK si la autenticación es exitosa
+        return ResponseEntity.ok(new JWTTokenData(JWTtoken));
     }
 }
