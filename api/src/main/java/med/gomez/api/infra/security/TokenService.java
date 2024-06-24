@@ -3,6 +3,9 @@ package med.gomez.api.infra.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.auth0.jwt.interfaces.JWTVerifier;
 import med.gomez.api.domain.users.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,7 +24,7 @@ public class TokenService {
     public String generateToken(User user) {
         try {
             // Crea el algoritmo HMAC256 con el secreto proporcionado
-            Algorithm algorithm = Algorithm.HMAC256(ApiSecret);
+            Algorithm algorithm = Algorithm.HMAC256(ApiSecret); // el tipo de algoritmo de encriptacion
             // Construye y firma el token JWT
             return JWT.create()
                     .withIssuer("GomezClinic") // Establece el emisor del token
@@ -33,6 +36,29 @@ public class TokenService {
             // Maneja la excepción si ocurre un error durante la creación del token
             throw new RuntimeException();
         }
+    }
+
+    public String getSubject(String token) {
+        if (token == null){
+            throw new RuntimeException();
+        }
+        DecodedJWT verifier = null;
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(ApiSecret);//validando la firma del token
+            verifier = JWT.require(algorithm)
+                    .withIssuer("GomezClinic")
+                    .build()
+                    .verify(token);
+            verifier.getSubject();
+
+
+        } catch (JWTVerificationException exception) {
+            System.out.println(exception.toString());
+        }
+        if (verifier.getSubject() == null){
+            throw new RuntimeException("verifier invalido");
+        }
+        return verifier.getSubject();
     }
 
     // Método privado para generar la fecha de expiración del token (3 horas desde ahora)
