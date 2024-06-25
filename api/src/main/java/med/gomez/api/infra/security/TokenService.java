@@ -38,31 +38,36 @@ public class TokenService {
         }
     }
 
+    // Método para obtener el sujeto del token JWT (el nombre de usuario) si es válido
     public String getSubject(String token) {
         if (token == null){
+            // Lanza una excepción si el token es nulo
             throw new RuntimeException();
         }
         DecodedJWT verifier = null;
         try {
-            Algorithm algorithm = Algorithm.HMAC256(ApiSecret);//validando la firma del token
+            // Crea el algoritmo HMAC256 con el secreto proporcionado para verificar el token
+            Algorithm algorithm = Algorithm.HMAC256(ApiSecret);
+            // Verifica y decodifica el token
             verifier = JWT.require(algorithm)
-                    .withIssuer("GomezClinic")
+                    .withIssuer("GomezClinic") // Verifica el emisor del token
                     .build()
-                    .verify(token);
-            verifier.getSubject();
-
+                    .verify(token); // Verifica el token
+            verifier.getSubject(); // Obtiene el sujeto del token (login del usuario)
 
         } catch (JWTVerificationException exception) {
+            // Maneja la excepción si ocurre un error durante la verificación del token
             System.out.println(exception.toString());
         }
         if (verifier.getSubject() == null){
+            // Lanza una excepción si el sujeto del token es nulo
             throw new RuntimeException("verifier invalido");
         }
-        return verifier.getSubject();
+        return verifier.getSubject(); // Retorna el sujeto del token
     }
 
     // Método privado para generar la fecha de expiración del token (3 horas desde ahora)
-    private Instant generateExpirationDate() {
+    private Instant generateExpirationDate (){
         return LocalDateTime.now().plusHours(3).toInstant(ZoneOffset.of("-05:00"));
     }
 }

@@ -26,7 +26,7 @@ public class Address {
     }
 
     // Método para actualizar los datos de la dirección a partir de un objeto AddressData
-    public Address updateData(AddressData addres) {
+    public Address updateAddress(AddressData addres) {
         this.street = addres.street();
         this.district = addres.district();
         this.city = addres.city();

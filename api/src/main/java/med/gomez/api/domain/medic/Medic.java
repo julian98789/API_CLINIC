@@ -50,7 +50,7 @@ public class Medic {
             this.document = updateMedicalData.document();
         }
         if (updateMedicalData.addres() != null) {
-            this.address = address.updateData(updateMedicalData.addres());
+            this.address = address.updateAddress(updateMedicalData.addres());
         }
     }
 

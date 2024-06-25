@@ -1,6 +1,5 @@
 package med.gomez.api.infra.security;
 
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,37 +8,39 @@ import med.gomez.api.domain.users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-@Component
+@Component // Indica que esta clase es un componente gestionado por Spring
 public class SecurityFilter extends OncePerRequestFilter {
 
-    @Autowired
+    @Autowired // Inyecta automáticamente una instancia de TokenService
     private TokenService tokenService;
 
-    @Autowired
+    @Autowired // Inyecta automáticamente una instancia de UserRepository
     private UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
+        // Obtiene el encabezado Authorization de la solicitud HTTP
         var authHeader = request.getHeader("Authorization");
-        if (authHeader != null){
+        if (authHeader != null) { // Verifica si el encabezado Authorization no es nulo
+            // Elimina el prefijo "Bearer " del token
             var token = authHeader.replace("Bearer ", "");
-            var userName = tokenService.getSubject(token);//extraemos el nombre de usuario 
-            if (userName != null){
-                // es valido
-                var user = userRepository.findByLogin(userName);
-                var authentication = new UsernamePasswordAuthenticationToken(user, null,
-                        user.getAuthorities());//forsamos la sesion
+            // Extrae el nombre de usuario del token
+            var userName = tokenService.getSubject(token);
+            if (userName != null) { // Verifica si el nombre de usuario no es nulo
+                // El token es válido
+                var user = userRepository.findByLogin(userName); // Busca el usuario en la base de datos
+                // Crea un objeto de autenticación con el usuario y sus autoridades
+                var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                // Establece la autenticación en el contexto de seguridad
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
-        filterChain.doFilter(request,response);
-
+        // Continúa con la cadena de filtros
+        filterChain.doFilter(request, response);
     }
 }
