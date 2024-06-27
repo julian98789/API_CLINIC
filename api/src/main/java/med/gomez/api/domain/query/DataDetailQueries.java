@@ -9,4 +9,7 @@ public record DataDetailQueries(
         Long idMedic,
         LocalDateTime fecha
 ) {
+    public DataDetailQueries(Query query){
+        this(query.getId(),query.getPatient().getId(),query.getMedic().getId(),query.getFecha());
+    }
 }

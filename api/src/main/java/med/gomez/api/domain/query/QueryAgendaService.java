@@ -3,9 +3,12 @@ package med.gomez.api.domain.query;
 import med.gomez.api.domain.medic.Medic;
 import med.gomez.api.domain.medic.MedicalRepository;
 import med.gomez.api.domain.patient.PatientRepository;
+import med.gomez.api.domain.query.validations.QueryValidator;
 import med.gomez.api.infra.errors.IntegrityValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class QueryAgendaService {
@@ -19,23 +22,33 @@ public class QueryAgendaService {
     @Autowired
     private QueryRepository queryRepository;
 
-    public void schedule (DataScheduleQuery data){
+    @Autowired
+    List<QueryValidator>validators;
 
-        if (patientRepository.findById(data.idPatient()).isPresent()){
+    public DataDetailQueries schedule (DataScheduleQuery data){
+
+        if (!patientRepository.findById(data.idPatient()).isPresent()){
             throw new IntegrityValidation("El id del pacinte no fue encontrado");
         }
 
-        if (data.idMedic()!=null && medicalRepository.existsById(data.idMedic())){
+        if (data.idMedic()!=null && !medicalRepository.existsById(data.idMedic())){
             throw new IntegrityValidation("El id del medico no fue encontrado");
         }
+        validators.forEach(v->v.validation(data));
 
         var patient = patientRepository.findById(data.idPatient()).get();
 
         var medic = selectMedic( data);
 
+        if (medic==null){
+            throw new IntegrityValidation("No existen medicos disponibles para este horario ni especialidad");
+        }
+
         var quiery = new Query(null,medic,patient,data.fecha());
 
         queryRepository.save(quiery);
+
+        return new DataDetailQueries(quiery);
 
     }
 

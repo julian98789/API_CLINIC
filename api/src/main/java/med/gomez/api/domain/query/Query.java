@@ -11,7 +11,7 @@ import med.gomez.api.domain.patient.Patient;
 import java.time.LocalDateTime;
 
 @Table(name = "consultas")
-@Entity(name = "query")
+@Entity(name = "Query")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

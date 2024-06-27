@@ -1,6 +1,7 @@
 package med.gomez.api.infra.errors;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ValidationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -24,6 +25,17 @@ public class ErrorHandler {
 
         return ResponseEntity.badRequest().body(errores); // Construye y devuelve una respuesta HTTP 400 con los errores de validación en el cuerpo
     }
+
+    @ExceptionHandler(IntegrityValidation.class)
+    public ResponseEntity errorHandlerIntegrityValidations(Exception e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity errorHandlerBusinessValidations(Exception e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
 
     // Clase record para representar errores de validación de datos
     private record dataValidationError(String campo, String error) {
