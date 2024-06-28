@@ -4,6 +4,7 @@ import med.gomez.api.domain.medic.Medic;
 import med.gomez.api.domain.medic.MedicalRepository;
 import med.gomez.api.domain.patient.PatientRepository;
 import med.gomez.api.domain.query.validations.QueryValidator;
+import med.gomez.api.domain.query.validations.cancellationValidation.ValidatedCancellationOfQueries;
 import med.gomez.api.infra.errors.IntegrityValidation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,9 @@ public class QueryAgendaService {
     @Autowired
     List<QueryValidator>validators;
 
+    @Autowired
+    List<ValidatedCancellationOfQueries> validatedCancellationOfQueries;
+
     public DataDetailQueries schedule (DataScheduleQuery data){
 
         if (!patientRepository.findById(data.idPatient()).isPresent()){
@@ -44,7 +48,7 @@ public class QueryAgendaService {
             throw new IntegrityValidation("No existen medicos disponibles para este horario ni especialidad");
         }
 
-        var quiery = new Query(null,medic,patient,data.fecha());
+        var quiery = new Query(medic,patient,data.fecha());
 
         queryRepository.save(quiery);
 
@@ -61,5 +65,15 @@ public class QueryAgendaService {
             throw new IntegrityValidation("debe seleccionarse una specialidad para el medico");
         }
         return medicalRepository.selectMedicalSpecialtyOnDate(data.specialty(),data.fecha());
+    }
+
+    public void cancel(DataCancellationConsultation data){
+        if (!queryRepository.existsById(data.idQuery())){
+            throw new IntegrityValidation("Id de la consulta  no existe ");
+        }
+        validatedCancellationOfQueries.forEach(v->v.validation(data));
+
+        var consultation = queryRepository.getReferenceById(data.idQuery());
+        consultation.cancel(data.reason());
     }
 }

@@ -32,4 +32,19 @@ public class Query {
 
     private LocalDateTime fecha;
 
+    @Column(name = "Reason_Cancellation")
+    @Enumerated(EnumType.STRING)
+    private ReasonCancellation reasonCancellation;
+
+    public Query (Medic medic,Patient patient,LocalDateTime fecha){
+        this.medic=medic;
+        this.patient=patient;
+        this.fecha=fecha;
+    }
+
+    public void cancel (ReasonCancellation reasonCancellation){
+        this.reasonCancellation = reasonCancellation;
+
+    }
+
 }
