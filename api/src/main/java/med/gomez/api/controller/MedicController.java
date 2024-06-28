@@ -1,5 +1,6 @@
 package med.gomez.api.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import med.gomez.api.domain.address.AddressData;
@@ -16,6 +17,7 @@ import java.net.URI;
 
 @RestController // Indica que esta clase es un controlador REST
 @RequestMapping("/medico") // Define la ruta base para este controlador
+@SecurityRequirement(name = "bearer-key")
 public class MedicController {
 
     @Autowired // Inyecta automáticamente una instancia de MedicalRepository

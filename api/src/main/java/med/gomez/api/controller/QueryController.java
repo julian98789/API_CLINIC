@@ -1,5 +1,6 @@
 package med.gomez.api.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import med.gomez.api.domain.query.DataCancellationConsultation;
 import med.gomez.api.domain.query.DataDetailQueries;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/consultas")
+@SecurityRequirement(name = "bearer-key")
 public class QueryController {
 
     @Autowired
@@ -29,6 +31,7 @@ public class QueryController {
 
     @DeleteMapping
     @Transactional
+    @SecurityRequirement(name = "bearer-key")
     public ResponseEntity cancel (@RequestBody @Valid DataCancellationConsultation data) throws IntegrityValidation{
         service.cancel(data);
         return ResponseEntity.noContent().build();
