@@ -7,8 +7,6 @@ import med.gomez.api.domain.medic.Specialty;
 import java.time.LocalDateTime;
 
 public record DataScheduleQuery(
-        Long id,
-
         @NotNull
         Long idPatient,
         Long idMedic,

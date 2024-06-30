@@ -33,6 +33,7 @@ class MedicalRepositoryTest {
     @Test
     @DisplayName("Deberia retornar null cuando el medico se encuentre en consuta con otro paciente")
     void selectMedicalSpecialtyOnDateScenery1() {
+        //dado
         var nextMonday10H = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY))
                 .atTime(10,0);
 
@@ -40,8 +41,10 @@ class MedicalRepositoryTest {
         var patient=registerPatient("maria","maria@gmail.com","1234");
         registerConsultation(medic,patient,nextMonday10H);
 
+        //caundo
         var FreeMedic = medicalRepository.selectMedicalSpecialtyOnDate(Specialty.CARDIOLOGY,nextMonday10H );
 
+        //entonces
         assertThat(FreeMedic).isNull();
     }
 
@@ -49,17 +52,17 @@ class MedicalRepositoryTest {
     @DisplayName("deberia retornar un medico cuando realice la consulta en la base de datos  en ese horario")
     void selectMedicalSpecialtyOnDateScenery2() {
 
-        //given
+        //dado
         var nextMonday10H = LocalDate.now()
                 .with(TemporalAdjusters.next(DayOfWeek.MONDAY))
                 .atTime(10,0);
 
         var medic=registerMedic("julian","julian@mail.com","1234",Specialty.CARDIOLOGY);
 
-        //when
+        //caundo
         var FreeMedic = medicalRepository.selectMedicalSpecialtyOnDate(Specialty.CARDIOLOGY,nextMonday10H);
 
-        //then
+        //entonces
         assertThat(FreeMedic).isEqualTo(medic);
     }
 
