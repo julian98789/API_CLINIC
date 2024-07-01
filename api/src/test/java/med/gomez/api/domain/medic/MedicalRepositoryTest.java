@@ -64,6 +64,32 @@ class MedicalRepositoryTest {
         assertThat(FreeMedic).isEqualTo(medic);
     }
 
+    @Test
+    @DisplayName("Debe retornar null cuando el id del medico no sea econtrado o no este activado")
+    void findActiveByIdScenery1() {
+        // Dado un ID de médico que no existe
+        Long noExistsMedicId = 999L;
+
+        Boolean Active = medicalRepository.findActiveById(noExistsMedicId);
+
+        assertThat(Active).isNull();
+
+
+    }
+
+    @Test
+    @DisplayName("Debe retornar null cuando el id del medico no sea econtrado")
+    void findActiveByIdScenery2() {
+        // Dado un ID de médico que no existe
+        var medic = registerMedic("julian", "julian@mail.com", "1234", Specialty.CARDIOLOGY);
+
+        Boolean Active = medicalRepository.findActiveById(medic.getId());
+
+        assertThat(Active).isTrue();
+
+
+    }
+
     // Método para registrar una consulta en la base de datos
     private void registerConsultation(Medic medic, Patient patient, LocalDateTime fecha) {
         testEntityManager.persist(new Query(null, medic, patient, fecha, null));
@@ -116,4 +142,6 @@ class MedicalRepositoryTest {
                 "12"
         );
     }
+
+
 }

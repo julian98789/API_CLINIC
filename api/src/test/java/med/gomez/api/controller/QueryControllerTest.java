@@ -1,9 +1,7 @@
 package med.gomez.api.controller;
 
 import med.gomez.api.domain.medic.Specialty;
-import med.gomez.api.domain.query.DataDetailQueries;
-import med.gomez.api.domain.query.DataScheduleQuery;
-import med.gomez.api.domain.query.QueryAgendaService;
+import med.gomez.api.domain.query.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +14,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
 import java.time.LocalDateTime;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -32,6 +33,9 @@ class QueryControllerTest {
 
     @Autowired
     private JacksonTester<DataScheduleQuery> dataScheduleQueryJacksonTester; // Para serializar y deserializar JSON
+
+    @Autowired
+    private JacksonTester<DataCancellationConsultation> dataCancellationConsultationJacksonTester;
 
     @Autowired
     private JacksonTester<DataDetailQueries> dataDetailQueriesJacksonTester; // Para serializar y deserializar JSON
@@ -75,5 +79,32 @@ class QueryControllerTest {
         // Se verifica que el contenido de la respuesta sea igual al JSON esperado
         var expectedJson = dataDetailQueriesJacksonTester.write(data).getJson();
         assertThat(response.getContentAsString()).isEqualTo(expectedJson);
+    }
+
+    @WithMockUser
+    @Test
+    @DisplayName("Deberia retornar un estado http 400 cuando los datos ingresados sean invalidos")
+    void cancelScenery1() throws Exception {
+        // Dado / cuando: se realiza una solicitud DELETE sin contenido
+        var response = mockMvc.perform(MockMvcRequestBuilders.delete("/consultas")).andReturn().getResponse();
+
+        // Entonces: se espera un estado HTTP 400 (Bad Request)
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    }
+    @WithMockUser
+    @Test
+    @DisplayName("Deberia retornar un estado http 200 cuando los datos ingresados sean validos")
+    void cancelScenery2() throws Exception {
+        Long idQuery = 1L;
+        ReasonCancellation reason = ReasonCancellation.PATIENT_CANCEL;
+
+        // Realiza la solicitud de cancelación
+        var response = mockMvc.perform(MockMvcRequestBuilders.delete("/consultas")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"idQuery\": 1, \"reason\": \"PATIENT_CANCEL\"}"))
+                .andReturn().getResponse();
+
+        // Verifica el estado HTTP 204
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.NO_CONTENT.value());
     }
 }
