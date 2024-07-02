@@ -1,6 +1,8 @@
 package med.gomez.api.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import med.gomez.api.domain.query.DataCancellationConsultation;
 import med.gomez.api.domain.query.DataDetailQueries;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/consultas")
 @SecurityRequirement(name = "bearer-key")
+@Tag(name = "Consultas", description = "Controlador para la gestión de consultas médicas")
 public class QueryController {
 
     @Autowired
@@ -22,6 +25,7 @@ public class QueryController {
 
     @PostMapping
     @Transactional
+    @Operation(summary = "Agendar una consulta", description = "Permite agendar una nueva consulta médica.")
     public ResponseEntity schedule (@RequestBody @Valid DataScheduleQuery data) throws IntegrityValidation {
 
         var response = service.schedule(data);
@@ -32,6 +36,7 @@ public class QueryController {
     @DeleteMapping
     @Transactional
     @SecurityRequirement(name = "bearer-key")
+    @Operation(summary = "Cancelar una consulta", description = "Permite cancelar una consulta médica existente.")
     public ResponseEntity cancel (@RequestBody @Valid DataCancellationConsultation data) throws IntegrityValidation{
         service.cancel(data);
         return ResponseEntity.noContent().build();

@@ -1,6 +1,8 @@
 package med.gomez.api.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import med.gomez.api.domain.address.AddressData;
@@ -18,6 +20,7 @@ import java.net.URI;
 @RestController // Indica que esta clase es un controlador REST
 @RequestMapping("/medico") // Define la ruta base para este controlador
 @SecurityRequirement(name = "bearer-key")
+@Tag(name = "Medico", description = "Controlador para la gestión de médicos")
 public class MedicController {
 
     @Autowired // Inyecta automáticamente una instancia de MedicalRepository
@@ -25,6 +28,7 @@ public class MedicController {
 
     // Endpoint para registrar un médico
     @PostMapping // Define que este método maneja las solicitudes POST a /medico
+    @Operation(summary = "Registrar un nuevo médico", description = "Registra un nuevo médico en la base de datos y devuelve la información del médico registrado.")
     public ResponseEntity<DataResponseMedical> registerMedic(
             @RequestBody @Valid MedicalRegistrationData medicalRegistrationData,
             UriComponentsBuilder uriComponentsBuilder) {
@@ -56,6 +60,7 @@ public class MedicController {
 
     // Endpoint para obtener la lista de médicos activos paginada
     @GetMapping // Define que este método maneja las solicitudes GET a /medico
+    @Operation(summary = "Obtener lista de médicos activos", description = "Devuelve una lista paginada de todos los médicos que están activos.")
     public ResponseEntity<Page<DataListMedical>> medicalList(
             @PageableDefault(size = 2) Pageable pagination) {
 
@@ -66,6 +71,7 @@ public class MedicController {
     // Endpoint para actualizar los datos de un médico
     @PutMapping // Define que este método maneja las solicitudes PUT a /medico
     @Transactional // Gestiona la transacción de manera automática por el contenedor de Spring
+    @Operation(summary = "Actualizar datos de un médico", description = "Actualiza la información de un médico existente en la base de datos.")
     public ResponseEntity<DataResponseMedical> updateMedical(
             @RequestBody @Valid UpdateMedicalData updateMedicalData) {
 
@@ -97,6 +103,7 @@ public class MedicController {
     // Endpoint para desactivar lógicamente un médico (soft delete)
     @DeleteMapping("/{id}") // Define que este método maneja las solicitudes DELETE a /medico/{id}
     @Transactional // Gestiona la transacción de manera automática por el contenedor de Spring
+    @Operation(summary = "Desactivar un médico", description = "Desactiva lógicamente un médico por su ID.")
     public ResponseEntity<Void> deleteMedic(@PathVariable Long id) {
 
         // Obtiene una referencia al médico desde el repositorio
@@ -111,6 +118,7 @@ public class MedicController {
 
     // Endpoint para obtener los datos de un médico por su ID
     @GetMapping("/{id}") // Define que este método maneja las solicitudes GET a /medico/{id}
+    @Operation(summary = "Obtener datos de un médico", description = "Devuelve los datos de un médico por su ID.")
     public ResponseEntity<DataResponseMedical> getMedicalData(@PathVariable Long id) {
 
         // Obtiene una referencia al médico desde el repositorio

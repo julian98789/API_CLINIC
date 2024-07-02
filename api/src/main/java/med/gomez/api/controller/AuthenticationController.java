@@ -1,5 +1,7 @@
 package med.gomez.api.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import med.gomez.api.domain.users.User;
 import med.gomez.api.domain.users.userAuthenticationData;
@@ -19,6 +21,7 @@ import java.security.PrivateKey;
 
 @RestController // Indica que esta clase es un controlador REST
 @RequestMapping("/login") // Define la ruta base para este controlador
+@Tag(name = "Autenticacion", description = "Obtiene el token para el usuario correspondiente que permite el acceso a los demás endpoints.")
 public class AuthenticationController {
 
     @Autowired // Inyecta automáticamente una instancia de AuthenticationManager
@@ -28,6 +31,7 @@ public class AuthenticationController {
     private TokenService tokenService;
 
     @PostMapping // Define que este método maneja las solicitudes POST a /login
+    @Operation(summary = "Autenticar usuario", description = "Autentica al usuario con las credenciales proporcionadas y genera un token JWT.")
     public ResponseEntity authenticateUser(@RequestBody @Valid userAuthenticationData userAuthenticationData) {
         // Crea un token de autenticación con las credenciales del usuario
         Authentication authToken = new UsernamePasswordAuthenticationToken(userAuthenticationData.login(), userAuthenticationData.clue());
