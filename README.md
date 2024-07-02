@@ -13,5 +13,10 @@ In this project, I use Spring Boot to develop a RESTful API for a medical clinic
     spring.datasource.url=jdbc:mysql://"Your host"/"The name of your database"
     spring.datasource.username="Your user"
     spring.datasource.password="Your password"
-    
+
+## Documentation:
+
+1. execute the project.
+2. enter the route: http://localhost:8080/swagger-ui/index.html#/
+
  
